@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Food Expiry Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2b2b2b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Expiry Tracker">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+  <h1>Food Expiry Tracker</h1>
+  <form id="foodForm">
+    <input type="text" id="item" placeholder="Item Name" required>
+    <input type="date" id="expiry" required>
+    <button type="submit">Add</button>
+  </form>
+  <ul id="itemList"></ul>
+
+  <script>
+    const form = document.getElementById('foodForm');
+    const itemList = document.getElementById('itemList');
+
+    function loadItems() {
+      const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
+      itemList.innerHTML = '';
+      const today = new Date();
+
+      items.forEach(({ name, expiry }, index) => {
+        const li = document.createElement('li');
+        const expDate = new Date(expiry);
+        li.textContent = `${name} - Expires on ${expiry}`;
+        if (expDate < today) li.style.color = 'red';
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = () => {
+          items.splice(index, 1);
+          localStorage.setItem('foodItems', JSON.stringify(items));
+          loadItems();
+        };
+
+        li.appendChild(delBtn);
+        itemList.appendChild(li);
+      });
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('item').value;
+      const expiry = document.getElementById('expiry').value;
+
+      const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
+      items.push({ name, expiry });
+      localStorage.setItem('foodItems', JSON.stringify(items));
+
+      form.reset();
+      loadItems();
+    });
+
+    loadItems();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker Registered'))
+        .catch(error => console.error('❌ Service Worker Failed:', error));
+    }
+  </script>
+</body>
+</html>
