@@ -14,6 +14,7 @@
 <body>
   <h1>Food Expiry Tracker</h1>
   <form id="foodForm">
+    <button type="button" id="sortBtn">Sort by Expiry</button>
     <input type="text" id="item" placeholder="Item Name" required>
     <input type="date" id="expiry" required>
     <button type="submit">Add</button>
@@ -24,7 +25,16 @@
     const form = document.getElementById('foodForm');
     const itemList = document.getElementById('itemList');
 
+    
     function loadItems() {
+      const sortButton = document.getElementById('sortBtn');
+      sortButton.onclick = () => {
+        const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
+        items.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
+        localStorage.setItem('foodItems', JSON.stringify(items));
+        loadItems();
+      };
+
       const items = JSON.parse(localStorage.getItem('foodItems') || '[]');
       itemList.innerHTML = '';
       const today = new Date();
