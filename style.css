@@ -1,11 +1,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-image: url('icons/icon-512.jpg'); /* adjust path if image is elsewhere */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
+  background-color: #121212;
+  color: #ffffff;
   margin: 0;
   padding: 2rem;
 }
